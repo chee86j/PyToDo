@@ -3,23 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <title>To-Do List</title>
 </head>
 <body>
-    <h1>To-Do List</h1>
-    <ul>
-        {% for todo in todos %}
-            <li>
-                <input type='checkbox' name='done' {% if todo['done'] %}checked{% endif %} onchange='this.form.submit()'>
-                <span {%if todo['done'] %}style='text-decoration: line-through'{% endif %}>{{ todo['task'] }}</span>
-                <a href='{{ url_for('edit', index=loop.index0) }}'>Edit</a>
-                <a href='{{ url_for('delete', index=loop.index0) }}'>Delete</a>
-            </li>
-        {% endfor %}
-    </ul>
-    <form action='{{ url_for('add') }}' method='post'> <!-- Fixed action attribute -->
-        <input type='text' name='todo' id='todo' placeholder='Enter a To-Do'>
-        <button type='submit'>Add</button>
-    </form>
+    <div class="container">
+        <h1>To-Do List</h1>
+        <ul class="todo-list">
+            {% for todo in todos %}
+                <li class="todo-item">
+                    <input type="checkbox" id="todo{{ loop.index0 }}" name="done" {% if todo['done'] %}checked{% endif %}>
+                    <label for="todo{{ loop.index0 }}" class="todo-label">
+                        <span>{{ todo['task'] }}</span>
+                    </label>
+                    <a href="{{ url_for('edit', index=loop.index0) }}" class="todo-action">Edit</a>
+                    <a href="{{ url_for('delete', index=loop.index0) }}" class="todo-action">Delete</a>
+                </li>
+            {% endfor %}
+        </ul>
+        <form class="add-form" action="{{ url_for('add') }}" method="post">
+            <input type="text" name="todo" id="todo" class="todo-input" placeholder="Enter a To-Do">
+            <button type="submit" class="btn btn-primary">Add</button>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var checkboxes = document.querySelectorAll('.todo-list input[type="checkbox"]');
+            checkboxes.forEach(function(checkbox) {
+                checkbox.addEventListener('change', function() {
+                    var label = this.nextElementSibling;
+                    if (this.checked) {
+                        label.classList.add('checked');
+                    } else {
+                        label.classList.remove('checked');
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
